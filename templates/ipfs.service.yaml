@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "helm-ipfs-cluster.selectorLabels" . | nindent 4 }}
     nodeType: ipfs
+  annotations:
+    {{- toYaml $.Values.ipfs.service.annotations | nindent 4 }}
 spec:
   type: {{ .Values.ipfs.service.type | default .Values.service.type }}
   ports:

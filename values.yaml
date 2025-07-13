@@ -38,7 +38,18 @@ cluster:
     volumeSize: ""  # "1Gi"
 
   service:
-    type: ""
+    type: ClusterIP
+    ports:
+      - name: p2p
+        port: 9096
+        targetPort: 9096
+      - name: proxy
+        port: 9095
+        targetPort: 9095
+      - name: rest
+        port: 9094
+        targetPort: 9094
+    annotations: {}
 
 ipfs:
   image:
@@ -75,6 +86,7 @@ ipfs:
 
   service:
     type: ClusterIP
+    annotations: {}
 
 fullnameOverride: ""
 
@@ -118,6 +130,3 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-
-
-

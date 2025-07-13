@@ -9,12 +9,16 @@ metadata:
   labels:
     {{- include "helm-ipfs-cluster.selectorLabels" $ | nindent 4 }}
     nodeType: cluster
+  annotations:
+    {{- toYaml $.Values.cluster.service.annotations | nindent 4 }}
 spec:
   type: {{ $.Values.cluster.service.type | default $.Values.service.type }}
   ports:
-  - port: 9096
-    name: p2p
-    #  clusterIP: None
+  {{- range $.Values.cluster.service.ports }}
+  - port: {{ .port }}
+    targetPort: {{ .targetPort }}
+    name: {{ .name }}
+  {{- end }}
   selector:
     {{- include "helm-ipfs-cluster.selectorLabels" $ | nindent 4 }}
     nodeType: cluster

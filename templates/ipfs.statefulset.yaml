@@ -20,8 +20,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "helm-ipfs-cluster.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.ipfs.podSecurityContext | nindent 8 }}
       containers:
       - name: ipfs
         image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
