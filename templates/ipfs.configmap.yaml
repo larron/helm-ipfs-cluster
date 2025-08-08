@@ -7,4 +7,4 @@ data:
     #!/bin/sh
     set -e
     echo "Setting Announce addresses..."
-    ipfs config Addresses.Announce '{{ toJson .Values.ipfs.announceAddresses }}'
+    ipfs config Addresses.Announce --json '{{ toJson .Values.ipfs.announceAddresses }}'
