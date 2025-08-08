@@ -88,6 +88,8 @@ ipfs:
     type: ClusterIP
     annotations: {}
 
+  announceAddresses: []
+
 fullnameOverride: ""
 
 sharedSecret: ""
