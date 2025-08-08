@@ -1,24 +1,10 @@
+{{- if gt (len .Values.ipfs.announceAddresses) 0 }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: ipfs-init-config
 data:
-  001-set-announce.sh: |-
+  ipfs-config.sh: |-
     #!/bin/sh
-    set -e
-
-    echo "Setting Announce addresses safely from ConfigMap..."
-
-    CONFIG_FILE="/container-init.d/announce-addresses"
-
-    if [ -f "$CONFIG_FILE" ]; then
-      ANNOUNCE_JSON=$(jq -R 'split(",")' "$CONFIG_FILE")
-
-      echo "Announce addresses to set: $ANNOUNCE_JSON"
-
-      ipfs config Addresses.Announce --json "$ANNOUNCE_JSON"
-
-      echo "Announce addresses updated."
-    else
-      echo "No announce-addresses ConfigMap file found — skipping."
-    fi
+    ipfs config --json Addresses.Announce '{{ .Values.ipfs.announceAddresses | toJson }}'
+{{- end }}

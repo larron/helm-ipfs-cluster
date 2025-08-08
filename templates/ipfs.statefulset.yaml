@@ -46,8 +46,8 @@ spec:
           mountPath: /data/ipfs
         {{- if gt (len .Values.ipfs.announceAddresses) 0 }}
         - name: ipfs-init-config
-          mountPath: /container-init.d/001-set-announce.sh
-          subPath: 001-set-announce.sh
+          mountPath: /container-init.d/ipfs-config.sh
+          subPath: ipfs-config.sh
         {{- end }}
         resources:
           {{- toYaml .Values.ipfs.resources | nindent 12 }}
