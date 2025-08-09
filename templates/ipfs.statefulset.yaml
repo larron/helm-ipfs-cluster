@@ -27,39 +27,19 @@ spec:
           - name: IPFS_FD_MAX
             value: "4096"
           {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
-          - name: ANNOUNCE_ADDRESSES
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
           - name: ANNOUNCE_ADDRESSES_SCRIPT
             value: |-
-              INDEX=$(echo $HOSTNAME | rev | cut -d'-' -f1 | rev);
-              ADDRESSES=$(
-                {{- $first := true }}
-                {{- range $index, $addrs := $.Values.ipfs.announceAddressesPerNode }}
-                if [ "$INDEX" = "{{ $index }}" ]; then
-                  {{- $innerFirst := true }}
-                  {{- range $addr := $addrs }}
-                    {{- if not $innerFirst }}echo -n ","; {{- end }}
-                    {{- $innerFirst = false }}
-                  echo -n "\"{{ $addr }}\"";
-                  {{- end }}
-                fi;
-                {{- end }}
-              );
-              if [ -z "$ADDRESSES" ]; then
-                {{- if hasKey $.Values "ipfs" }}
-                {{- if hasKey $.Values.ipfs "announceAddresses" }}
-                {{- $first := true }}
-                {{- range $addr := $.Values.ipfs.announceAddresses }}
-                  {{- if not $first }}echo -n ","; {{- end }}
-                  {{- $first = false }}
-                echo -n "\"{{ $addr }}\"";
-                {{- end }}
-                {{- end }}
-                {{- end }}
-              fi;
-              echo $ADDRESSES
+              INDEX=$(echo $HOSTNAME | rev | cut -d'-' -f1 | rev)
+              case "$INDEX" in
+              {{- range $idx, $addrs := .Values.ipfs.announceAddressesPerNode }}
+                "{{ $idx }}")
+                  echo '['{{- range $i, $addr := $addrs }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']'
+                  ;;
+              {{- end }}
+                *)
+                  echo '['{{- range $i, $addr := .Values.ipfs.announceAddresses }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']'
+                  ;;
+              esac
           {{- end }}
         ports:
           - name: swarm
