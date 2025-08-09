@@ -33,19 +33,11 @@ spec:
               case "$INDEX" in
               {{- range $idx, $addrs := .Values.ipfs.announceAddressesPerNode }}
                 "{{ $idx }}")
-                  echo '['
-                  {{- range $i, $addr := $addrs }}
-                    {{- if $i }},{{ end }}"{{ $addr }}"
-                  {{- end }}
-                  ']'
+                  echo '['{{- range $i, $addr := $addrs }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']'
                   ;;
               {{- end }}
                 *)
-                  echo '['
-                  {{- range $i, $addr := .Values.ipfs.announceAddresses }}
-                    {{- if $i }},{{ end }}"{{ $addr }}"
-                  {{- end }}
-                  ']'
+                  echo '['{{- range $i, $addr := .Values.ipfs.announceAddresses }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']'
                   ;;
               esac
           {{- end }}
