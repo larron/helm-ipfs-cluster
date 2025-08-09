@@ -30,13 +30,18 @@ spec:
           - name: ANNOUNCE_ADDRESSES
             value: |-
               {{- $index := .Ordinal | int }}
+              {{- $first := true }}
               {{- with index $.Values.ipfs.announceAddressesPerNode $index }}
                 {{- range $addr := . }}
-                  {{ $addr }}
+                  {{- if not $first }},{{- end }}
+                  {{- $first = false }}
+                  "{{ $addr }}"
                 {{- end }}
               {{- else }}
                 {{- range $addr := $.Values.ipfs.announceAddresses }}
-                  {{ $addr }}
+                  {{- if not $first }},{{- end }}
+                  {{- $first = false }}
+                  "{{ $addr }}"
                 {{- end }}
               {{- end }}
           {{- end }}
