@@ -12,11 +12,14 @@ spec:
   ports:
   - port: 4001
     name: swarm
+  - port: 4002
+    name: swarm-udp
   - port: 5001
     name: api
+  - port: 8081
+    name: ws
   - port: 8080
     name: gateway
-    #  clusterIP: None
   selector:
     {{- include "helm-ipfs-cluster.selectorLabels" . | nindent 4 }}
     nodeType: ipfs

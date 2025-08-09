@@ -54,6 +54,12 @@ spec:
         - containerPort: {{ .targetPort }}
           name: {{ .name }}
         {{- end }}
+        livenessProbe:
+          tcpSocket:
+            port: p2p
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
         volumeMounts:
         - name: data
           mountPath: /data/ipfs-cluster

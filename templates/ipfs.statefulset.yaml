@@ -23,24 +23,31 @@ spec:
       containers:
       - name: ipfs
         image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
+        env:
+          - name: IPFS_FD_MAX
+            value: "4096"
         ports:
-        - containerPort: 4001
-          name: swarm
-        - containerPort: 5001
-          name: api
-        - containerPort: 8080
-          name: gateway
-        - containerPort: 5353
-          name: zeroconf
-          protocol: UDP
-#        livenessProbe:
-#          httpGet:
-#            path: /
-#            port: gateway
-#        readinessProbe:
-#          httpGet:
-#            path: /
-#            port: gateway
+          - name: swarm
+            protocol: TCP
+            containerPort: 4001
+          - name: swarm-udp
+            protocol: UDP
+            containerPort: 4002
+          - name: api
+            protocol: TCP
+            containerPort: 5001
+          - name: ws
+            protocol: TCP
+            containerPort: 8081
+          - name: gateway
+            protocol: TCP
+            containerPort: 8080
+        livenessProbe:
+          tcpSocket:
+            port: swarm
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          periodSeconds: 15
         volumeMounts:
         - name: data
           mountPath: /data/ipfs
