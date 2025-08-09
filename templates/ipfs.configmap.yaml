@@ -1,18 +1,9 @@
+{{- if gt (len .Values.ipfs.announceAddresses) 0 }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: ipfs-init-config
 data:
   ipfs-config.sh: |-
-    #!/bin/sh
-    INDEX=$(echo $HOSTNAME | rev | cut -d'-' -f1 | rev)
-    case "$INDEX" in
-    {{- range $idx, $addrs := .Values.ipfs.announceAddressesPerNode }}
-      "{{ $idx }}")
-        echo '['{{- range $i, $addr := $addrs }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']' | xargs -I{} ipfs config --json Addresses.AppendAnnounce {}
-        ;;
-    {{- end }}
-      *)
-        echo '['{{- range $i, $addr := .Values.ipfs.announceAddresses }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']' | xargs -I{} ipfs config --json Addresses.AppendAnnounce {}
-        ;;
-    esac
+    ipfs config --json Addresses.AppendAnnounce '{{ toJson .Values.ipfs.announceAddresses }}'
+{{- end }}

@@ -51,7 +51,7 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data/ipfs
-        {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
+        {{- if gt (len .Values.ipfs.announceAddresses) 0 }}
         - name: ipfs-init-config
           mountPath: /container-init.d/ipfs-config.sh
           subPath: ipfs-config.sh
@@ -70,7 +70,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
+      {{- if gt (len .Values.ipfs.announceAddresses) 0 }}
       volumes:
         - name: ipfs-init-config
           configMap:
