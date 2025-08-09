@@ -6,5 +6,6 @@ metadata:
 data:
   ipfs-config.sh: |-
     #!/bin/sh
-    ipfs config --json Addresses.AppendAnnounce "[${ANNOUNCE_ADDRESSES}]"
+    ADDRESSES=$(eval $ANNOUNCE_ADDRESSES_SCRIPT)
+    ipfs config --json Addresses.AppendAnnounce "[${ADDRESSES}]"
 {{- end }}

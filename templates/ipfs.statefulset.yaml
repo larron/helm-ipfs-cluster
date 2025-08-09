@@ -28,22 +28,38 @@ spec:
             value: "4096"
           {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
           - name: ANNOUNCE_ADDRESSES
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: ANNOUNCE_ADDRESSES_SCRIPT
             value: |-
-              {{- $index := .Ordinal | int }}
-              {{- $first := true }}
-              {{- with index $.Values.ipfs.announceAddressesPerNode $index }}
-                {{- range $addr := . }}
-                  {{- if not $first }},{{- end }}
-                  {{- $first = false }}
-                  "{{ $addr }}"
+              INDEX=$(echo $HOSTNAME | rev | cut -d'-' -f1 | rev);
+              ADDRESSES=$(
+                {{- $first := true }}
+                {{- range $index, $addrs := $.Values.ipfs.announceAddressesPerNode }}
+                if [ "$INDEX" = "{{ $index }}" ]; then
+                  {{- $innerFirst := true }}
+                  {{- range $addr := $addrs }}
+                    {{- if not $innerFirst }}echo -n ","; {{- end }}
+                    {{- $innerFirst = false }}
+                  echo -n "\"{{ $addr }}\"";
+                  {{- end }}
+                fi;
                 {{- end }}
-              {{- else }}
+              );
+              if [ -z "$ADDRESSES" ]; then
+                {{- if hasKey $.Values "ipfs" }}
+                {{- if hasKey $.Values.ipfs "announceAddresses" }}
+                {{- $first := true }}
                 {{- range $addr := $.Values.ipfs.announceAddresses }}
-                  {{- if not $first }},{{- end }}
+                  {{- if not $first }}echo -n ","; {{- end }}
                   {{- $first = false }}
-                  "{{ $addr }}"
+                echo -n "\"{{ $addr }}\"";
                 {{- end }}
-              {{- end }}
+                {{- end }}
+                {{- end }}
+              fi;
+              echo $ADDRESSES
           {{- end }}
         ports:
           - name: swarm
