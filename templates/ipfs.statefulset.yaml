@@ -26,21 +26,6 @@ spec:
         env:
           - name: IPFS_FD_MAX
             value: "4096"
-          {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
-          - name: ANNOUNCE_ADDRESSES_SCRIPT
-            value: |-
-              INDEX=$(echo $HOSTNAME | rev | cut -d'-' -f1 | rev)
-              case "$INDEX" in
-              {{- range $idx, $addrs := .Values.ipfs.announceAddressesPerNode }}
-                "{{ $idx }}")
-                  echo '['{{- range $i, $addr := $addrs }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']'
-                  ;;
-              {{- end }}
-                *)
-                  echo '['{{- range $i, $addr := .Values.ipfs.announceAddresses }}{{ if $i }},{{ end }}"{{ $addr }}"{{- end }}']'
-                  ;;
-              esac
-          {{- end }}
         ports:
           - name: swarm
             protocol: TCP
