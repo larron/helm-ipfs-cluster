@@ -26,6 +26,20 @@ spec:
         env:
           - name: IPFS_FD_MAX
             value: "4096"
+          {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
+          - name: ANNOUNCE_ADDRESSES
+            value: |-
+              {{- $index := .Ordinal | int }}
+              {{- with index $.Values.ipfs.announceAddressesPerNode $index }}
+                {{- range $addr := . }}
+                  {{ $addr }}
+                {{- end }}
+              {{- else }}
+                {{- range $addr := $.Values.ipfs.announceAddresses }}
+                  {{ $addr }}
+                {{- end }}
+              {{- end }}
+          {{- end }}
         ports:
           - name: swarm
             protocol: TCP
@@ -51,7 +65,7 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data/ipfs
-        {{- if gt (len .Values.ipfs.announceAddresses) 0 }}
+        {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
         - name: ipfs-init-config
           mountPath: /container-init.d/ipfs-config.sh
           subPath: ipfs-config.sh
@@ -70,7 +84,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if gt (len .Values.ipfs.announceAddresses) 0 }}
+      {{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
       volumes:
         - name: ipfs-init-config
           configMap:

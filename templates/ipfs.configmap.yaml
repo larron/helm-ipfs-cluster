@@ -1,4 +1,4 @@
-{{- if gt (len .Values.ipfs.announceAddresses) 0 }}
+{{- if gt (len .Values.ipfs.announceAddressesPerNode) 0 }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,5 +6,5 @@ metadata:
 data:
   ipfs-config.sh: |-
     #!/bin/sh
-    ipfs config --json Addresses.AppendAnnounce '{{ .Values.ipfs.announceAddresses | toJson }}'
+    ipfs config --json Addresses.AppendAnnounce "$ANNOUNCE_ADDRESSES"
 {{- end }}
