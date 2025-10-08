@@ -20,6 +20,23 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "helm-ipfs-cluster.serviceAccountName" . }}
+      initContainers:
+      - name: ipfs-repo-migrate
+        image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
+        command:
+          - sh
+          - -c
+          - |
+            echo "Running IPFS repo migration if needed..."
+            if ipfs repo fsck >/dev/null 2>&1; then
+              echo "Repo is healthy"
+            else
+              echo "Repo requires migration"
+              ipfs repo migrate --allow-downgrade
+            fi
+        volumeMounts:
+          - name: data
+            mountPath: /data/ipfs
       containers:
       - name: ipfs
         image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
