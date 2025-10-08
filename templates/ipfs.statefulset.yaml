@@ -25,7 +25,7 @@ spec:
         image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
         securityContext:
           runAsUser: 1000
-          runAsGroup: 1000
+          runAsGroup: 100
         command:
           - sh
           - -c
@@ -45,7 +45,7 @@ spec:
         image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
         securityContext:
           runAsUser: 1000
-          runAsGroup: 1000
+          runAsGroup: 100
         env:
           - name: IPFS_FD_MAX
             value: "4096"
