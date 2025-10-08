@@ -23,6 +23,9 @@ spec:
       initContainers:
       - name: ipfs-repo-migrate
         image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
         command:
           - sh
           - -c
@@ -40,6 +43,9 @@ spec:
       containers:
       - name: ipfs
         image: {{ .Values.ipfs.image.repository }}:{{ .Values.ipfs.image.tag | default "latest" }}
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
         env:
           - name: IPFS_FD_MAX
             value: "4096"
